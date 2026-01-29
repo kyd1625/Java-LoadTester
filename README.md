@@ -34,6 +34,48 @@ Java 21의 **가상 쓰레드(Virtual Threads)**를 활용하여 고효율의 HT
 - **load_test_result**: 테스트 종료 후 집계된 최종 성능 지표(P99 Latency, 성공률 등) 저장.
 - **load_test_fail_log**: 분석을 위해 실패한 개별 호출의 순번(`request_order`)과 에러 상세 사유 기록.
 
+```mermaid
+erDiagram
+    LOAD_TEST_SCENARIO ||--o{ LOAD_TEST_RESULT : "generates"
+    LOAD_TEST_RESULT ||--o{ LOAD_TEST_FAIL_LOG : "records_errors"
+
+    LOAD_TEST_SCENARIO {
+        bigint id PK "Primary Key"
+        varchar name "시나리오 이름"
+        varchar target_url "테스트 대상 URL"
+        varchar http_method "GET, POST 등"
+        text request_params "JSON 파라미터"
+        int target_tps "초당 목표 요청 수"
+        int virtual_thread_count "할당 가상 쓰레드 수"
+        int duration_seconds "테스트 지속 시간"
+        datetime created_at "생성 일시"
+    }
+
+    LOAD_TEST_RESULT {
+        bigint id PK "Primary Key"
+        bigint scenario_id FK "Scenario 참조"
+        int total_requests "전체 요청 수"
+        int success_count "성공 횟수"
+        int fail_count "실패 횟수"
+        double avg_latency_ms "평균 지연 시간"
+        double min_latency_ms "최소 지연 시간"
+        double max_latency_ms "최대 지연 시간"
+        double p99_latency_ms "99% 응답 지연 시간"
+        datetime started_at "테스트 시작 시간"
+        datetime ended_at "테스트 종료 시간"
+    }
+
+    LOAD_TEST_FAIL_LOG {
+        bigint id PK "Primary Key"
+        bigint result_id FK "Result 참조"
+        bigint request_order "실패한 호출 순번"
+        text error_msg "에러 상세 메시지"
+        datetime request_time "에러 발생 시각"
+        int http_status "HTTP 상태 코드"
+    }
+
+```
+
 ---
 
 ## ⚙️ Infrastructure Setup (Docker)
@@ -43,3 +85,5 @@ Java 21의 **가상 쓰레드(Virtual Threads)**를 활용하여 고효율의 HT
 ```bash
 # 컨테이너 실행 및 초기화 스크립트(init.sql) 자동 실행
 docker-compose up -d
+
+```
