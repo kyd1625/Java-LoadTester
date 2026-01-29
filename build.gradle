@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.2'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.project'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '21' // Virtual Threads 사용을 위해 21 권장
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 1. Web & Central Controller
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 2. Database & Persistence
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 3. Performance Metrics (성능 측정을 위한 핵심 라이브러리)
+    implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus 연동용
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' // 헬스체크 및 메트릭 노출
+
+    // 4. Utils & Client
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux' // WebClient 사용을 위해 포함
+
+    // 5. Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

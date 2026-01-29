@@ -1,0 +1,18 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: java-load-tester-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: load_tester_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: loadtester
+      MYSQL_PASSWORD: password123
+    ports:
+      - "3306:3306"
+    volumes:
+      # 로컬의 init.sql 파일을 컨테이너의 초기화 폴더로 연결
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci

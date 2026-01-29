@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    # Docker로 띄운 MySQL 주소 (로컬 환경)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/load_tester_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: loadtester
+    password: password123
+
+  # MyBatis 설정 (추후 XML 매퍼 사용을 대비)
+  mybatis:
+    type-aliases-package: com.project.model
+    configuration:
+      map-underscore-to-camel-case: true # DB의 snake_case를 Java의 camelCase로 매핑
+
+  # 가상 쓰레드 사용 활성화 (Java 21 이상)
+  threads:
+    virtual:
+      enabled: true
+
+# 로그 레벨 설정 (SQL 확인용)
+logging:
+  level:
+    com.project.repository: DEBUG
