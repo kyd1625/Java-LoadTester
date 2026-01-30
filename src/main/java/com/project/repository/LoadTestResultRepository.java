@@ -1,0 +1,11 @@
+package com.project.repository;
+
+import com.project.model.LoadTestResult;
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface LoadTestResultRepository {
+    void insertResult(LoadTestResult result);
+    LoadTestResult selectResultByScenarioId(Long scenarioId);
+    void deleteResultByScenarioId(Long scenarioId);
+}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.repository.LoadTestFailLogRepository">
+
+    <insert id="insertFailLog">
+        INSERT INTO load_test_fail_log (
+                     result_id
+                , 	request_order
+                , 	error_msg
+                , 	request_time
+                , 	http_status
+        ) VALUES(
+                     #{resultId}
+                , 	#{requestOrder}
+                , 	#{errorMsg}
+                , 	#{requestTime}
+                , 	#{httpStatus}
+        )
+    </insert>
+
+    <select id="selectFailLogByResultId" resultType="com.project.model.LoadTestFailLog">
+        SELECT id
+             , result_id
+             , request_order
+             , error_msg
+             , request_time
+             , http_status
+        FROM load_test_fail_log
+        WHERE result_id = #{resultId}
+    </select>
+
+    <delete id="deleteFailLogByResultId">
+        DELETE FROM load_test_fail_log WHERE result_id = #{resultId}
+    </delete>
+
+</mapper>
