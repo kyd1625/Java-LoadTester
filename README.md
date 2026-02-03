@@ -1,6 +1,6 @@
 # 🚀 Java-LoadTester: Virtual Thread Based Load Generator
 
-Java 21의 **가상 쓰레드(Virtual Threads)**를 활용하여 고효율의 HTTP 부하를 생성하고,
+Java 21의 가상 쓰레드(Virtual Threads)를 활용하여 고효율의 HTTP 부하를 생성하고,
 시스템의 성능 임계점을 측정 및 분석하는 오픈소스 프로젝트입니다.
 
 ---
