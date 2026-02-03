@@ -3,7 +3,7 @@
 
 <mapper namespace="com.project.repository.LoadTestFailLogRepository">
 
-    <insert id="insertFailLog">
+    <insert id="insertFailLog" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO load_test_fail_log (
                      result_id
                 , 	request_order
@@ -21,11 +21,11 @@
 
     <select id="selectFailLogByResultId" resultType="com.project.model.LoadTestFailLog">
         SELECT id
-             , result_id
-             , request_order
-             , error_msg
-             , request_time
-             , http_status
+             , result_id AS resultId
+             , request_order AS requestOrder
+             , error_msg AS errorMsg
+             , request_time AS requestTime
+             , http_status AS httpStatus
         FROM load_test_fail_log
         WHERE result_id = #{resultId}
     </select>

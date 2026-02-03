@@ -31,16 +31,16 @@
 
     <select id="selectResultByScenarioId" resultType="com.project.model.LoadTestResult">
         SELECT id
-             , scenario_id
-             , total_requests
-             , success_count
-             , fail_count
-             , avg_latency_ms
-             , min_latency_ms
-             , max_latency_ms
-             , p99_latency_ms
-             , started_at
-             , ended_at
+             , scenario_id AS scenarioId
+             , total_requests AS totalRequests
+             , success_count AS successCount
+             , fail_count AS failCount
+             , avg_latency_ms AS avgLatencyMs
+             , min_latency_ms AS minLatencyMs
+             , max_latency_ms AS maxLatencyMs
+             , p99_latency_ms AS p99LatencyMs
+             , started_at AS startedAt
+             , ended_at AS endedAt
         FROM load_test_result
         WHERE scenario_id = #{scenarioId}
     </select>

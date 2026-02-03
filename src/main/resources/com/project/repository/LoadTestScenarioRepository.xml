@@ -27,14 +27,14 @@
 
     <select id="selectScenarios" resultType="com.project.model.LoadTestScenario">
         SELECT id
-             , name
-             , target_url
-             , http_method
-             , request_params
-             , target_tps
-             , virtual_thread_count
-             , duration_seconds
-             , created_at
+             , name AS name
+             , target_url AS targetUrl
+             , http_method AS httpMethod
+             , request_params AS requestParams
+             , target_tps AS targetTps
+             , virtual_thread_count AS virtualThreadCount
+             , duration_seconds AS durationSeconds
+             , created_at AS createdAt
         FROM load_test_scenario
         WHERE 1=1
         <if test="name != null and name != ''">
@@ -42,6 +42,20 @@
         </if>
         ORDER BY created_at DESC
 
+    </select>
+
+    <select id="selectScenarioById" resultType="com.project.model.LoadTestScenario">
+        SELECT id
+             , name AS name
+             , target_url AS targetUrl
+             , http_method AS httpMethod
+             , request_params AS requestParams
+             , target_tps AS targetTps
+             , virtual_thread_count AS virtualThreadCount
+             , duration_seconds AS durationSeconds
+             , created_at AS createdAt
+        FROM load_test_scenario
+        WHERE id = #{id}
     </select>
 
     <delete id="deleteScenarioById">
