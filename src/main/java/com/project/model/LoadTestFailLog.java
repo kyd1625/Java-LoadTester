@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,6 +17,6 @@ public class LoadTestFailLog {
     private long requestOrder;    // [추가] 몇 번째 호출이었는지 (순번)
 
     private String errorMsg;      // 에러 메시지
-    private String requestTime;   // 실패 시간
+    private LocalDateTime requestTime;   // 실패 시간
     private int httpStatus;       // HTTP 상태 코드
 }

@@ -88,7 +88,7 @@ class RepositoryTest {
         failLog.setResultId(generatedId); // FK 연결
         failLog.setRequestOrder(15L);
         failLog.setErrorMsg("Connection Refused 에러 발생");
-        failLog.setRequestTime(LocalDateTime.now().toString());
+        failLog.setRequestTime(LocalDateTime.now());
         failLog.setHttpStatus(500);
 
         failLogRepository.insertFailLog(failLog);
