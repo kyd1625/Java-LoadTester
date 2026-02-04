@@ -36,10 +36,11 @@
              , duration_seconds AS durationSeconds
              , created_at AS createdAt
         FROM load_test_scenario
-        WHERE 1=1
-        <if test="name != null and name != ''">
-            AND name LIKE CONCAT('%', #{name}, '%')
-        </if>
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
         ORDER BY created_at DESC
 
     </select>
