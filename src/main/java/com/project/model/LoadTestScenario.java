@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,5 +26,5 @@ public class LoadTestScenario {
     private int virtualThreadCount;// 사용할 가상 쓰레드(Worker) 개수
     private int durationSeconds;   // 테스트 지속 시간 (초)
 
-    private String createdAt;
+    private LocalDateTime createdAt;
 }

@@ -76,8 +76,8 @@ class RepositoryTest {
         result.setMinLatencyMs(50.0);
         result.setMaxLatencyMs(2000.0);
         result.setP99LatencyMs(1500.0);
-        result.setStartedAt(LocalDateTime.now().toString());
-        result.setEndedAt(LocalDateTime.now().plusMinutes(1).toString());
+        result.setStartedAt(LocalDateTime.now());
+        result.setEndedAt(LocalDateTime.now().plusMinutes(1));
 
         resultRepository.insertResult(result);
         Long generatedId = result.getId();
