@@ -8,9 +8,10 @@ spring:
 
   # MyBatis 설정 (추후 XML 매퍼 사용을 대비)
   mybatis:
+    mapper-locations: classpath:com/project/repository/*.xml
     type-aliases-package: com.project.model
     configuration:
-      map-underscore-to-camel-case: true # DB의 snake_case를 Java의 camelCase로 매핑
+      map-underscore-to-camel-case: true
 
   # 가상 쓰레드 사용 활성화 (Java 21 이상)
   threads:

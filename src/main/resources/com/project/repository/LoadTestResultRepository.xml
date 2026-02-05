@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.repository.LoadTestResultRepository">
+
+    <insert id="insertResult" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO load_test_result (
+                     scenario_id
+                , 	total_requests
+                , 	success_count
+                , 	fail_count
+                , 	avg_latency_ms
+                , 	min_latency_ms
+                , 	max_latency_ms
+                , 	p99_latency_ms
+                , 	started_at
+                , 	ended_at
+        ) VALUES(
+                     #{scenarioId}
+                , 	#{totalRequests}
+                , 	#{successCount}
+                , 	#{failCount}
+                , 	#{avgLatencyMs}
+                , 	#{minLatencyMs}
+                , 	#{maxLatencyMs}
+                , 	#{p99LatencyMs}
+                , 	#{startedAt}
+                , 	#{endedAt}
+        )
+    </insert>
+
+    <select id="selectResultByScenarioId" resultType="com.project.model.LoadTestResult">
+        SELECT id
+             , scenario_id AS scenarioId
+             , total_requests AS totalRequests
+             , success_count AS successCount
+             , fail_count AS failCount
+             , avg_latency_ms AS avgLatencyMs
+             , min_latency_ms AS minLatencyMs
+             , max_latency_ms AS maxLatencyMs
+             , p99_latency_ms AS p99LatencyMs
+             , started_at AS startedAt
+             , ended_at AS endedAt
+        FROM load_test_result
+        WHERE scenario_id = #{scenarioId}
+    </select>
+
+    <delete id="deleteResultByScenarioId">
+        DELETE FROM load_test_result WHERE scenario_id = #{scenarioId}
+    </delete>
+
+</mapper>
