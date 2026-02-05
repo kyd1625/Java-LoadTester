@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,6 +28,6 @@ public class LoadTestResult {
     private double p99LatencyMs;   // 상위 1% 응답 시간 (꼬리 지연 확인용)
 
     // 시간 정보
-    private String startedAt;      // 테스트 시작 시각
-    private String endedAt;        // 테스트 종료 시각
+    private LocalDateTime startedAt;      // 테스트 시작 시각
+    private LocalDateTime endedAt;        // 테스트 종료 시각
 }

@@ -76,8 +76,8 @@ class RepositoryTest {
         result.setMinLatencyMs(50.0);
         result.setMaxLatencyMs(2000.0);
         result.setP99LatencyMs(1500.0);
-        result.setStartedAt(LocalDateTime.now().toString());
-        result.setEndedAt(LocalDateTime.now().plusMinutes(1).toString());
+        result.setStartedAt(LocalDateTime.now());
+        result.setEndedAt(LocalDateTime.now().plusMinutes(1));
 
         resultRepository.insertResult(result);
         Long generatedId = result.getId();
@@ -88,7 +88,7 @@ class RepositoryTest {
         failLog.setResultId(generatedId); // FK 연결
         failLog.setRequestOrder(15L);
         failLog.setErrorMsg("Connection Refused 에러 발생");
-        failLog.setRequestTime(LocalDateTime.now().toString());
+        failLog.setRequestTime(LocalDateTime.now());
         failLog.setHttpStatus(500);
 
         failLogRepository.insertFailLog(failLog);
