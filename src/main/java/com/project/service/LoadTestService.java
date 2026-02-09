@@ -1,10 +1,13 @@
 package com.project.service;
 
+import com.project.model.LoadTestFailLog;
 import com.project.model.LoadTestScenario;
+import com.project.repository.LoadTestFailLogRepository;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,9 +15,11 @@ import java.util.concurrent.Executors;
 public class LoadTestService {
 
     private final WebClient.Builder webClientBuilder;
+    private final LoadTestFailLogRepository loadTestFailLogRepository;
 
-    public LoadTestService(WebClient.Builder webClientBuilder) {
+    public LoadTestService(WebClient.Builder webClientBuilder, LoadTestFailLogRepository loadTestFailLogRepository) {
         this.webClientBuilder = webClientBuilder;
+        this.loadTestFailLogRepository = loadTestFailLogRepository;
     }
 
     /**
@@ -54,7 +59,15 @@ public class LoadTestService {
 
             long endTime = System.currentTimeMillis();
         } catch (Exception e) {
-            // FailLog 구현
+            // 실패 시 DB에 로그 저장
+            LoadTestFailLog failLog = new LoadTestFailLog();
+            failLog.setResultId(resultId);             // 부모 결과 ID
+            failLog.setRequestOrder(order);           // 몇 번째 요청이었는지
+            failLog.setErrorMsg(e.getMessage());      // 에러 메시지 (예: Connection Refused)
+            failLog.setRequestTime(LocalDateTime.now()); // 발생 시각
+            failLog.setHttpStatus(500);               // 기본값 500 (필요시 상세 분류 가능)
+
+            loadTestFailLogRepository.insertFailLog(failLog); // DB 저장 실행
         }
         
     }
