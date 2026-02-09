@@ -29,6 +29,11 @@
         )
     </insert>
 
+    <update id="updateResult">
+        UPDATE load_test_result SET
+
+    </update>
+
     <select id="selectResultByScenarioId" resultType="com.project.model.LoadTestResult">
         SELECT id
              , scenario_id AS scenarioId
