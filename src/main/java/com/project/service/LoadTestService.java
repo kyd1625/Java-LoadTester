@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -33,23 +34,23 @@ public class LoadTestService {
         this.loadTestScenarioRepository = loadTestScenarioRepository;
     }
 
+    public record TestStats(int success, int fail) {}
+
     public void startTestEngine(LoadTestScenario scenario) {
 
-        // 1. 시나리오 저장 (MyBatis가 scenario 객체에 id를 채워줌)
+        // 1. 시나리오ID를 가져오기 위해 시나리오 저장 (Id값 자동 생성)
         loadTestScenarioRepository.insertScenario(scenario);
-        Long scenarioId = scenario.getId(); // 시나리오 ID 획득
+        Long scenarioId = scenario.getId(); 
 
-        // 1. 빈 껍데기(초기 결과) 생성 및 저장
+        // 1. ResultID를 가져오기 위해 데이터 생성 및 저장 (Id값 자동 생성)
         LoadTestResult result = new LoadTestResult();
         result.setScenarioId(scenarioId);
         result.setStartedAt(LocalDateTime.now());
-
-        // DB에 넣으면 MyBatis가 result 객체 안에 자동으로 생성된 ID를 채워줍니다.
         loadTestResultRepository.insertResult(result);
-        Long resultId = result.getId(); // 드디어 생긴 ID!
+        Long resultId = result.getId();
 
-        // 2. 실제 테스트 실행 (이 ID를 들고 갑니다)
-        executeLoadTest(scenario, resultId);
+        // 2. 테스트 실행
+        TestStats stats = executeLoadTest(scenario, result.getId());
 
         // 3. 테스트 완료 후 최종 업데이트
         result.setEndedAt(LocalDateTime.now());
@@ -60,23 +61,42 @@ public class LoadTestService {
     /**
      * Virtual Threads execute
      * @param scenario
+     * @return TestStats (성공, 실패 횟수)
      **/
-    public void executeLoadTest(LoadTestScenario scenario, Long resultId) {
+    public TestStats executeLoadTest(LoadTestScenario scenario, Long resultId) {
 
         AtomicLong globalOrder = new AtomicLong(0); // 여러 쓰레드 접근시 데이터 유실 발생 가능성 으로 CAS(Compare-And-Swap) 사용
+        AtomicInteger successCount = new AtomicInteger(0);
+        AtomicInteger failCount = new AtomicInteger(0);
+
+        // 종료시간 = 현재시간 + 지속시간
+        long endTimeMillis = System.currentTimeMillis() + (scenario.getDurationSeconds() * 1000L);
+
 
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
 
             for(int i = 0; i < scenario.getVirtualThreadCount(); i++) {
                 executor.submit(() -> {
-                    long currentOrder = globalOrder.incrementAndGet();
-                   callRequest(scenario, resultId, currentOrder);
+
+                    while (System.currentTimeMillis() < endTimeMillis) {
+                        long currentOrder = globalOrder.incrementAndGet();
+                        boolean isSuccess = callRequest(scenario, resultId, currentOrder);
+
+                        if (isSuccess) {
+                            successCount.incrementAndGet(); // 성공시 +1
+                        } else {
+                            failCount.incrementAndGet(); // 실패시 +1
+                        }
+                    }
+
+
                 });
+
+
             }
 
-
-
         }
+        return new TestStats(successCount.get(), failCount.get());
 
     }
 
@@ -84,10 +104,11 @@ public class LoadTestService {
      * api Request
      * @param scenario
      */
-    public void callRequest(LoadTestScenario scenario, long resultId, long currentOrder) {
-        
-        long startTime = System.currentTimeMillis(); 
-        
+    public boolean callRequest(LoadTestScenario scenario, long resultId, long currentOrder) {
+
+        long startTime = System.currentTimeMillis();
+        boolean isSuccess; // Request 별 성공/실패 유무
+
         try {
             webClientBuilder.build()
                     .method(HttpMethod.valueOf(scenario.getHttpMethod()))
@@ -103,6 +124,7 @@ public class LoadTestService {
                     .bodyToMono(String.class)
                     .block();
 
+            isSuccess = true; // 성공
             long endTime = System.currentTimeMillis();
         } catch (Exception e) {
             // 실패 시 DB에 로그 저장
@@ -119,9 +141,12 @@ public class LoadTestService {
                 failLog.setHttpStatus(0); // 0이나 특정 약속된 코드로 저장
             }
 
+            isSuccess = false; // 실패
             loadTestFailLogRepository.insertFailLog(failLog); // DB 저장 실행
         }
-        
+
+
+        return isSuccess;
     }
 
 }
