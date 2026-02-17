@@ -8,6 +8,7 @@ import com.project.service.dto.TestStats;
 import com.project.service.runner.LoadTestRunner;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Service
@@ -16,15 +17,18 @@ public class LoadTestService {
     private final LoadTestRunner loadTestRunner;
     private final LoadTestResultRepository loadTestResultRepository;
     private final LoadTestScenarioRepository loadTestScenarioRepository;
+    private final Clock clock;
 
     public LoadTestService(
             LoadTestRunner loadTestRunner,
             LoadTestResultRepository loadTestResultRepository,
-            LoadTestScenarioRepository loadTestScenarioRepository
+            LoadTestScenarioRepository loadTestScenarioRepository,
+            Clock clock
     ) {
         this.loadTestRunner = loadTestRunner;
         this.loadTestResultRepository = loadTestResultRepository;
         this.loadTestScenarioRepository = loadTestScenarioRepository;
+        this.clock = clock;
     }
 
     public void startTestEngine(LoadTestScenario scenario) {
@@ -34,7 +38,7 @@ public class LoadTestService {
         // 2. 결과 row 선생성 후 생성된 Result ID 확보
         LoadTestResult result = new LoadTestResult();
         result.setScenarioId(scenario.getId());
-        result.setStartedAt(LocalDateTime.now());
+        result.setStartedAt(LocalDateTime.now(clock));
         loadTestResultRepository.insertResult(result);
 
         // 3. 가상 스레드 기반 테스트 실행
@@ -48,7 +52,7 @@ public class LoadTestService {
         result.setMinLatencyMs(stats.minLatencyMs());
         result.setMaxLatencyMs(stats.maxLatencyMs());
         result.setP99LatencyMs(stats.p99LatencyMs());
-        result.setEndedAt(LocalDateTime.now());
+        result.setEndedAt(LocalDateTime.now(clock));
         loadTestResultRepository.updateResult(result);
     }
 }
