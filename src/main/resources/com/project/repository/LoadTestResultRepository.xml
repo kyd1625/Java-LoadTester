@@ -29,6 +29,19 @@
         )
     </insert>
 
+    <update id="updateResult">
+        UPDATE load_test_result
+        SET total_requests = #{totalRequests}
+          , success_count = #{successCount}
+          , fail_count = #{failCount}
+          , avg_latency_ms = #{avgLatencyMs}
+          , min_latency_ms = #{minLatencyMs}
+          , max_latency_ms = #{maxLatencyMs}
+          , p99_latency_ms = #{p99LatencyMs}
+          , ended_at = #{endedAt}
+        WHERE id = #{id}
+    </update>
+
     <select id="selectResultByScenarioId" resultType="com.project.model.LoadTestResult">
         SELECT id
              , scenario_id AS scenarioId

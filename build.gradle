@@ -8,7 +8,7 @@ group = 'com.project'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '21' // Virtual Threads 사용을 위해 21 권장
+    sourceCompatibility = '21' // Recommended for virtual threads
 }
 
 configurations {
@@ -22,21 +22,22 @@ repositories {
 }
 
 dependencies {
-    // 1. Web & Central Controller
+    // 1. Web & central controller
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // 2. Database & Persistence
+    // 2. Database & persistence
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // 3. Performance Metrics (성능 측정을 위한 핵심 라이브러리)
-    implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus 연동용
-    implementation 'org.springframework.boot:spring-boot-starter-actuator' // 헬스체크 및 메트릭 노출
+    // 3. Performance metrics
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    // 4. Utils & Client
+    // 4. Utils & client
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux' // WebClient 사용을 위해 포함
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.hdrhistogram:HdrHistogram:2.2.2' // P99 with fixed memory footprint
 
     // 5. Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

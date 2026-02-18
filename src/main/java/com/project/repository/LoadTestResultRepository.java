@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoadTestResultRepository {
     void insertResult(LoadTestResult result);
+    void updateResult(LoadTestResult result);
     LoadTestResult selectResultByScenarioId(Long scenarioId);
     void deleteResultByScenarioId(Long scenarioId);
 }
