@@ -11,17 +11,20 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Component
 public class LoadTestRequestExecutor {
 
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient webClient;
     private final LoadTestFailLogRepository loadTestFailLogRepository;
+    private final Clock clock;
 
-    public LoadTestRequestExecutor(WebClient.Builder webClientBuilder, LoadTestFailLogRepository loadTestFailLogRepository) {
-        this.webClientBuilder = webClientBuilder;
+    public LoadTestRequestExecutor(WebClient.Builder webClientBuilder, LoadTestFailLogRepository loadTestFailLogRepository, Clock clock) {
+        this.webClient = webClientBuilder.build();
         this.loadTestFailLogRepository = loadTestFailLogRepository;
+        this.clock = clock;
     }
 
     public RequestResult execute(LoadTestScenario scenario, long resultId, long currentOrder) {
@@ -30,7 +33,7 @@ public class LoadTestRequestExecutor {
 
         try {
             // 시나리오 설정(메서드/URL/파라미터)으로 실제 HTTP 요청 실행
-            webClientBuilder.build()
+            webClient
                     .method(HttpMethod.valueOf(scenario.getHttpMethod()))
                     .uri(scenario.getTargetUrl())
                     .bodyValue(scenario.getRequestParams())
@@ -50,7 +53,7 @@ public class LoadTestRequestExecutor {
             failLog.setResultId(resultId);
             failLog.setRequestOrder(currentOrder);
             failLog.setErrorMsg(e.getMessage());
-            failLog.setRequestTime(LocalDateTime.now());
+            failLog.setRequestTime(LocalDateTime.now(clock));
 
             if (e instanceof WebClientResponseException ex) {
                 failLog.setHttpStatus(ex.getStatusCode().value());
