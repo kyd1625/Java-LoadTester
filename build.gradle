@@ -24,6 +24,7 @@ repositories {
 dependencies {
     // 1. Web & central controller
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // 2. Database & persistence
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
